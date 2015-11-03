@@ -3,12 +3,12 @@
 namespace MarkovBot
 {
 	/*
-	 * Produces the Markov data structure for use by the consumer.
+	 * Produces the Markov data structure for use by the Consumer.
 	 */
-	class producer
+	class Producer
 	{
 	public:
-		producer(void);
-		~producer(void);
+		Producer(void);
+		~Producer(void);
 	};
 }

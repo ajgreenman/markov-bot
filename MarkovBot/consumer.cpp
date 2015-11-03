@@ -1,12 +1,12 @@
 #include "consumer.h"
 
-using MarkovBot::consumer;
+using MarkovBot::Consumer;
 
-consumer::consumer(void)
+Consumer::Consumer(void)
 {
 }
 
 
-consumer::~consumer(void)
+Consumer::~Consumer(void)
 {
 }

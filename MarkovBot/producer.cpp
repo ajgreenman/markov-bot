@@ -1,12 +1,12 @@
 #include "producer.h"
 
-using MarkovBot::producer;
+using MarkovBot::Producer;
 
-producer::producer(void)
+Producer::Producer(void)
 {
 }
 
 
-producer::~producer(void)
+Producer::~Producer(void)
 {
 }

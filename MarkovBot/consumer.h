@@ -5,10 +5,10 @@ namespace MarkovBot
 	/*
 	 * Consumes the Markov data structure to output "Markovian" text.
 	 */
-	class consumer
+	class Consumer
 	{
 	public:
-		consumer(void);
-		~consumer(void);
+		Consumer(void);
+		~Consumer(void);
 	};
 }
