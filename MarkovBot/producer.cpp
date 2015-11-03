@@ -1,5 +1,6 @@
 #include "producer.h"
 
+using MarkovBot::producer;
 
 producer::producer(void)
 {

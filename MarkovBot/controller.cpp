@@ -1,5 +1,6 @@
 #include "controller.h"
 
+using MarkovBot::controller;
 
 controller::controller(void)
 {
