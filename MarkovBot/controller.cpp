@@ -1,12 +1,7 @@
-#include "controller.h"
-
-using MarkovBot::controller;
-
-controller::controller(void)
+/*
+ * Responsible for controlling the interactions between I/O and the Producer and Consumer classes.
+ */
+int main()
 {
-}
-
-
-controller::~controller(void)
-{
+	return 0;
 }
