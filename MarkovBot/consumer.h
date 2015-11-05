@@ -1,9 +1,11 @@
 #pragma once
 
+#include "Utility.h"
+
 namespace MarkovBot
 {
 	/*
-	 * Consumes the Markov data structure to output "Markovian" text.
+	 * Consumes the markov data structure to output "Markovian" text.
 	 */
 	class Consumer
 	{

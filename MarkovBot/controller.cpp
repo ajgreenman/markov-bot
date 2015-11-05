@@ -5,12 +5,12 @@ using MarkovBot::Consumer;
 using MarkovBot::Producer;
 
 /*
- * Responsible for controlling the interactions between I/O and the Producer and Consumer classes.
+ * Responsible for controlling the interactions between I/O and the producer and consumer classes.
  */
 int main()
 {
 	Producer p = Producer::Producer();
-	std::string markov_file = p.generate_markov("test_output.txt", "test_input.txt");
+	std::string markov_file = p.generate_markov("test_output.markov", "test_input.txt");
 
 	return 0;
 }

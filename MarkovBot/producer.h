@@ -1,6 +1,7 @@
 #ifndef __MARKOVBOT_PRODUCER_H
 #define __MARKOVBOT_PRODUCER_H
 
+#include "Utility.h"
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -11,7 +12,7 @@
 namespace MarkovBot
 {
 	/*
-	 * Produces the Markov data structure for use by the Consumer.
+	 * Produces the markov data structure for use by the consumer.
 	 */
 	class Producer
 	{

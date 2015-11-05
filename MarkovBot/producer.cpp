@@ -28,11 +28,11 @@ std::string Producer::generate_markov(std::string output_name, std::string file_
 
 	if(create_markov_graph(words, output_name))
 	{
+		std::cout << "Markov graph written to " << output_name << "." << std::endl;
 		return output_name;
 	}
 
 	std::cout << "Unable to write to " << output_name << "." << std::endl;
-
 	return "";
 }
 
@@ -51,9 +51,7 @@ bool Producer::parse_file(std::string file_name, std::vector<std::string> &w)
 	// Read entire contents of the file into a single string.
 	std::string content((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
 
-	// Split the string up into words and add it to the word vector.
-	std::istringstream iss(content);
-	std::copy(std::istream_iterator<std::string>(iss), std::istream_iterator<std::string>(), std::back_inserter(w));
+	w = MarkovBot::Utility::split_string_to_vector(content);
 
 	return true;
 }
@@ -64,6 +62,8 @@ bool Producer::parse_file(std::string file_name, std::vector<std::string> &w)
 bool Producer::create_markov_graph(std::vector<std::string> w, std::string output_name)
 {
 	std::map<std::string, std::vector<std::string>> graph;
+	
+	std::cout << "Generating markov graph..." << std::endl;
 
 	for(int i = 0; i < w.size() - 1; ++i)
 	{
@@ -74,6 +74,8 @@ bool Producer::create_markov_graph(std::vector<std::string> w, std::string outpu
 		
 		graph[w[i]].push_back(w[i + 1]);
 	}
+	
+	std::cout << "Markov graph succesfully created." << std::endl;
 
 	return write_file(output_name, graph);
 }
@@ -92,7 +94,7 @@ bool Producer::write_file(std::string output_name, const std::map<std::string, s
 
 	for(auto &words : graph)
 	{
-		ofs << words.first << ":";
+		ofs << words.first << "|";
 		for(auto &word : words.second)
 		{
 			ofs << word << " ";
