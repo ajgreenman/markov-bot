@@ -24,6 +24,8 @@ std::string Producer::generate_markov(std::string output_name, std::string file_
 		return "";
 	}
 
+	output_name = get_output_name(output_name);
+
 	if(create_markov_graph(words, output_name))
 	{
 		return output_name;
@@ -90,7 +92,7 @@ bool Producer::write_file(std::string output_name, const std::map<std::string, s
 
 	for(auto &words : graph)
 	{
-		ofs << words.first << " : ";
+		ofs << words.first << ":";
 		for(auto &word : words.second)
 		{
 			ofs << word << " ";
@@ -100,4 +102,17 @@ bool Producer::write_file(std::string output_name, const std::map<std::string, s
 
 	ofs.close();
 	return true;
+}
+
+/*
+ * Strips out file extensions and appends the markov file extension.
+ */ 
+std::string Producer::get_output_name(std::string output_name)
+{
+	std::size_t pos = output_name.find(".");
+
+	std::string ret_val = output_name.substr(0, pos);
+	ret_val.append(".markov");
+
+	return ret_val;
 }
