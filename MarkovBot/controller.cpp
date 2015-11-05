@@ -10,7 +10,7 @@ using MarkovBot::Producer;
 int main()
 {
 	Producer p = Producer::Producer();
-	std::string markov_file = p.generate_markov("test.txt", "test_data.txt");
+	std::string markov_file = p.generate_markov("test_output.txt", "test_input.txt");
 
 	return 0;
 }

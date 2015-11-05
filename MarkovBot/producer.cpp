@@ -8,13 +8,14 @@ Producer::Producer(void)
 
 }
 
-
 Producer::~Producer(void)
 {
 
 }
 
-
+/*
+ * Parses the input into a markov graph and writes it to a file.
+ */
 std::string Producer::generate_markov(std::string output_name, std::string file_name)
 {
 	if(!parse_file(file_name, words))
@@ -23,14 +24,19 @@ std::string Producer::generate_markov(std::string output_name, std::string file_
 		return "";
 	}
 
-	if(write_file(output_name, words))
+	if(create_markov_graph(words, output_name))
 	{
 		return output_name;
 	}
 
+	std::cout << "Unable to write to " << output_name << "." << std::endl;
+
 	return "";
 }
 
+/*
+ * Parses the input file into an array of individual words.
+ */
 bool Producer::parse_file(std::string file_name, std::vector<std::string> &w)
 {
 	std::ifstream ifs;
@@ -50,7 +56,48 @@ bool Producer::parse_file(std::string file_name, std::vector<std::string> &w)
 	return true;
 }
 
-bool Producer::write_file(std::string output_name, const std::vector<std::string> &w)
+/*
+ * Transforms an array of words into a markov graph.
+ */
+bool Producer::create_markov_graph(std::vector<std::string> w, std::string output_name)
 {
+	std::map<std::string, std::vector<std::string>> graph;
+
+	for(int i = 0; i < w.size() - 1; ++i)
+	{
+		if(graph.find(w[i]) == graph.end())
+		{
+			graph[w[i]] = std::vector<std::string>();
+		}
+		
+		graph[w[i]].push_back(w[i + 1]);
+	}
+
+	return write_file(output_name, graph);
+}
+
+/*
+ * Writes a markov graph to a file.
+ */
+bool Producer::write_file(std::string output_name, const std::map<std::string, std::vector<std::string> > &graph)
+{
+	std::ofstream ofs(output_name);
+
+	if(!ofs.is_open())
+	{
+		return false;
+	}
+
+	for(auto &words : graph)
+	{
+		ofs << words.first << " : ";
+		for(auto &word : words.second)
+		{
+			ofs << word << " ";
+		}
+		ofs << std::endl;
+	}
+
+	ofs.close();
 	return true;
 }
