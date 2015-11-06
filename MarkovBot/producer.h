@@ -19,7 +19,7 @@ namespace MarkovBot
 	public:
 		Producer(void);
 		~Producer(void);
-		std::string generate_markov(std::string output_name, std::string file_name);
+		std::string generate_markov(std::string output_name, std::vector<std::string> file_names);
 	private:
 		std::vector<std::string> words;
 		std::string get_output_name(std::string output_name);

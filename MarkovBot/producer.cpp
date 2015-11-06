@@ -16,12 +16,14 @@ Producer::~Producer(void)
 /*
  * Parses the input into a markov graph and writes it to a file.
  */
-std::string Producer::generate_markov(std::string output_name, std::string file_name)
+std::string Producer::generate_markov(std::string output_name, std::vector<std::string> file_names)
 {
-	if(!parse_file(file_name, words))
+	for(auto &file : file_names)
 	{
-		std::cout << "Unable to read " << file_name << "." << std::endl;
-		return "";
+		if(!parse_file(file, words))
+		{
+			return "";
+		}
 	}
 
 	output_name = get_output_name(output_name);
@@ -45,13 +47,20 @@ bool Producer::parse_file(std::string file_name, std::vector<std::string> &w)
 	ifs.open(file_name);
 	if(!ifs.good())
 	{
+		std::cout << "Unable to read " << file_name << "." << std::endl;
 		return false;
 	}
+	
+	std::cout << "Reading " << file_name << "..." << std::endl;
 
 	// Read entire contents of the file into a single string.
 	std::string content((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
 
-	w = MarkovBot::Utility::split_string_to_vector(content);
+	std::vector<std::string> data = MarkovBot::Utility::split_string_to_vector(content);
+
+	w.insert(w.end(), data.begin(), data.end());
+
+	std::cout << "Successfully read " << file_name << "." << std::endl;
 
 	return true;
 }

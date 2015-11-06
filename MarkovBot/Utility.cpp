@@ -7,10 +7,7 @@ using MarkovBot::Utility;
  */
 bool Utility::parse_markov_file(std::string markov_file, std::map<std::string, std::vector<std::string>> &graph)
 {
-	std::size_t pos = markov_file.find(".");
-	std::string file_extension = markov_file.substr(pos);
-
-	if(file_extension != ".markov")
+	if(is_markov(markov_file))
 	{
 		std::cout << "Not a .markov file" << std::endl;
 		return false;
@@ -28,6 +25,7 @@ bool Utility::parse_markov_file(std::string markov_file, std::map<std::string, s
 
 	graph.clear();
 
+	std::size_t pos;
 	std::string line, key, v;
 	std::vector<std::string> value;
 	while(std::getline(ifs, line))
@@ -44,6 +42,31 @@ bool Utility::parse_markov_file(std::string markov_file, std::map<std::string, s
 	std::cout << "Done parsing..." << std::endl;
 
 	return true;
+}
+
+/*
+ * Combines two markov graphs into one.
+ */
+void Utility::combine_graphs(std::map<std::string, std::vector<std::string>> &a,
+					   const std::map<std::string, std::vector<std::string>> &b)
+{
+	std::string key;
+	std::vector<std::string> value;
+
+	for(auto &key_value : b)
+	{
+		key = key_value.first;
+		value = key_value.second;
+
+		if(a.find(key) == a.end())
+		{
+			a.insert(key_value);
+		}
+		else 
+		{
+			a[key].insert(a[key].end(), value.begin(), value.end());
+		}
+	}
 }
 
 /*
@@ -77,4 +100,15 @@ std::vector<std::string> Utility::split_string_to_vector(std::string s)
 	std::copy(std::istream_iterator<std::string>(iss), std::istream_iterator<std::string>(), std::back_inserter(ret_val));
 
 	return ret_val;
+}
+
+/*
+ * Checks the file extension to see if it's a markov file or not.
+ */
+bool Utility::is_markov(std::string file_name)
+{
+	std::size_t pos = file_name.find(".");
+	std::string file_extension = file_name.substr(pos);
+
+	return file_extension == ".markov";
 }
