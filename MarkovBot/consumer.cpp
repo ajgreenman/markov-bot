@@ -13,11 +13,17 @@ Consumer::~Consumer()
 
 }
 
+/*
+ * Swaps in a new markov graph, replacing the old one.
+ */
 void Consumer::swap(std::map<std::string, std::vector<std::string>> graph)
 {
 	markov_graph = graph;
 }
 
+/*
+ * Generates pseudo-text from a markov graph.
+ */
 std::string Consumer::generate_text()
 {
 	srand(time(NULL));
@@ -41,6 +47,9 @@ std::string Consumer::generate_text()
 	return ret_val;
 }
 
+/*
+ * Finds a random starting point in the markov graph.
+ */
 std::string Consumer::find_starting_place()
 {
 	std::size_t graph_sz = markov_graph.size();

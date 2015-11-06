@@ -104,6 +104,11 @@ std::vector<std::string> Utility::split_string_to_vector(std::string s)
 bool Utility::is_markov(std::string file_name)
 {
 	std::size_t pos = file_name.find(".");
+	if(pos == std::string::npos)
+	{
+		return false;
+	}
+
 	std::string file_extension = file_name.substr(pos);
 
 	return file_extension == ".markov";
