@@ -1,6 +1,7 @@
 #ifndef __MARKOVBOT_UTILITY_H
 #define __MARKOVBOT_UTILITY_H
 
+#include <exception>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -16,7 +17,7 @@ namespace MarkovBot
 	class Utility
 	{
 	public:
-		static bool parse_markov_file(std::string markov_file, std::map<std::string, std::vector<std::string>> &graph);
+		static void parse_markov_file(std::string markov_file, std::map<std::string, std::vector<std::string>> &graph);
 		static void combine_graphs(std::map<std::string, std::vector<std::string>> &a,
 								   const std::map<std::string, std::vector<std::string>> &b);
 		static void print_graph(std::map<std::string, std::vector<std::string>> graph);

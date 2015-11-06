@@ -5,20 +5,18 @@ using MarkovBot::Utility;
 /*
  * Parses a .markov file into a markov graph.
  */
-bool Utility::parse_markov_file(std::string markov_file, std::map<std::string, std::vector<std::string>> &graph)
+void Utility::parse_markov_file(std::string markov_file, std::map<std::string, std::vector<std::string>> &graph)
 {
 	if(!is_markov(markov_file))
 	{
-		std::cout << "Not a .markov file." << std::endl;
-		return false;
+		throw std::exception("Could not parse file because it was not a .markov file.");
 	}
 
 	std::ifstream ifs;
 	ifs.open(markov_file);
 	if(!ifs.good())
 	{
-		std::cout << "Can't open file." << std::endl;
-		return false;
+		throw std::exception("Could not find file.");
 	}
 
 	std::cout << "Parsing " << markov_file << "..." << std::endl;
@@ -40,8 +38,6 @@ bool Utility::parse_markov_file(std::string markov_file, std::map<std::string, s
 	}
 
 	std::cout << "Done parsing. Markov graph created." << std::endl;
-
-	return true;
 }
 
 /*

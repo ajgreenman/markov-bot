@@ -10,7 +10,10 @@ namespace MarkovBot
 	class Consumer
 	{
 	public:
-		Consumer(void);
+		Consumer(std::map<std::string, std::vector<std::string>> graph);
 		~Consumer(void);
+		void swap(std::map<std::string, std::vector<std::string>> graph);
+	private:
+		std::map<std::string, std::vector<std::string>> markov_graph;
 	};
 }

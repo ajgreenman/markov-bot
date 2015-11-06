@@ -14,9 +14,19 @@ int main()
 	std::vector<std::string> files;
 	files.push_back("test_input.txt");
 
+	std::map<std::string, std::vector<std::string>> graph;
 	Producer p = Producer::Producer();
-	p.generate_markov("test_output.markov", files);
+	try
+	{
+		graph = p.generate_markov("test_output.markov", files);
+	}
+	catch (std::exception &e)
+	{
+		std::cout << e.what() << std::endl;
+		return 1;
+	}
 
-	std::cout << "Done." << std::endl;
+	Consumer c = Consumer::Consumer(graph);
+
 	return 0;
 }
