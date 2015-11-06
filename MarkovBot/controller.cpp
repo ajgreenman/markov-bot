@@ -19,18 +19,19 @@ int main()
 	std::string output_file = get_output_file();
 
 	std::map<std::string, std::vector<std::string>> graph;
-	Producer p = Producer::Producer();
+
 	try
 	{
+		Producer p = Producer::Producer();
 		graph = p.generate_markov(output_file, input_files);
+		Consumer c = Consumer::Consumer(graph);
+		std::cout << c.generate_text() << std::endl;
 	}
 	catch (std::exception &e)
 	{
 		std::cout << e.what() << std::endl;
 		return 1;
 	}
-
-	Consumer c = Consumer::Consumer(graph);
 
 	return 0;
 }

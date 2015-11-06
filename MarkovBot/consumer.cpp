@@ -26,12 +26,17 @@ void Consumer::swap(std::map<std::string, std::vector<std::string>> graph)
  */
 std::string Consumer::generate_text()
 {
+	if(markov_graph.begin() == markov_graph.end())
+	{
+		throw std::exception("Markov graph is empty.");
+	}
+
 	srand(time(NULL));
 	std::string ret_val;
 	std::string key = find_starting_place();
 
 	int i = 0;
-	while(i <= 10000)
+	while(i <= 1000)
 	{
 		ret_val.append(key);
 		ret_val.append(" ");

@@ -73,14 +73,17 @@ void Producer::create_markov_graph(std::vector<std::string> w, std::map<std::str
 {
 	std::cout << "Generating markov graph..." << std::endl;
 
-	for(int i = 0; i < w.size() - 1; ++i)
+	for(int i = 0; i < w.size(); ++i)
 	{
 		if(graph.find(w[i]) == graph.end())
 		{
 			graph[w[i]] = std::vector<std::string>();
 		}
 		
-		graph[w[i]].push_back(w[i + 1]);
+		if(i + 1 != w.size())
+		{
+			graph[w[i]].push_back(w[i + 1]);
+		}
 	}
 	
 	std::cout << "Markov graph succesfully created." << std::endl;
