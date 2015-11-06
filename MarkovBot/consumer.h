@@ -1,5 +1,7 @@
-#pragma once
+#ifndef __MARKOVBOT_CONSUMER_H
+#define __MARKOVBOT_CONSUMER_H
 
+#include <time.h>
 #include "Utility.h"
 
 namespace MarkovBot
@@ -11,9 +13,13 @@ namespace MarkovBot
 	{
 	public:
 		Consumer(std::map<std::string, std::vector<std::string>> graph);
-		~Consumer(void);
+		~Consumer();
 		void swap(std::map<std::string, std::vector<std::string>> graph);
+		std::string generate_text();
 	private:
 		std::map<std::string, std::vector<std::string>> markov_graph;
+		std::string find_starting_place();
 	};
 }
+
+#endif

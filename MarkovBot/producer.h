@@ -17,8 +17,8 @@ namespace MarkovBot
 	class Producer
 	{
 	public:
-		Producer(void);
-		~Producer(void);
+		Producer();
+		~Producer();
 		std::map<std::string, std::vector<std::string>> generate_markov(std::string output_name, std::vector<std::string> file_names);
 	private:
 		std::vector<std::string> words;

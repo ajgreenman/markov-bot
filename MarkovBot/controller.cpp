@@ -27,6 +27,7 @@ int main()
 	}
 
 	Consumer c = Consumer::Consumer(graph);
+	c.generate_text();
 
 	return 0;
 }

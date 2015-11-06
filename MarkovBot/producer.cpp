@@ -2,13 +2,13 @@
 
 using MarkovBot::Producer;
 
-Producer::Producer(void)
+Producer::Producer()
 	: words()
 {
 
 }
 
-Producer::~Producer(void)
+Producer::~Producer()
 {
 
 }
