@@ -7,9 +7,9 @@ using MarkovBot::Utility;
  */
 bool Utility::parse_markov_file(std::string markov_file, std::map<std::string, std::vector<std::string>> &graph)
 {
-	if(is_markov(markov_file))
+	if(!is_markov(markov_file))
 	{
-		std::cout << "Not a .markov file" << std::endl;
+		std::cout << "Not a .markov file." << std::endl;
 		return false;
 	}
 
@@ -21,7 +21,7 @@ bool Utility::parse_markov_file(std::string markov_file, std::map<std::string, s
 		return false;
 	}
 
-	std::cout << "Parsing .markov file..." << std::endl;
+	std::cout << "Parsing " << markov_file << "..." << std::endl;
 
 	graph.clear();
 
@@ -39,7 +39,7 @@ bool Utility::parse_markov_file(std::string markov_file, std::map<std::string, s
 		graph[key] = value;
 	}
 
-	std::cout << "Done parsing..." << std::endl;
+	std::cout << "Done parsing. Markov graph created." << std::endl;
 
 	return true;
 }

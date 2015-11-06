@@ -15,7 +15,8 @@ int main()
 	files.push_back("test_input.txt");
 
 	Producer p = Producer::Producer();
-	std::string markov_file = p.generate_markov("test_output.txt", files);
+	p.generate_markov("test_output.markov", files);
 
+	std::cout << "Done." << std::endl;
 	return 0;
 }
