@@ -16,7 +16,7 @@ Producer::~Producer()
 /*
  * Parses the input into a markov graph and writes it to a file.
  */
-std::map<std::string, std::vector<std::string>> Producer::generate_markov(std::string output_name, std::vector<std::string> file_names)
+std::map<std::string, std::vector<std::string>> Producer::generate_markov(std::string output_name, std::vector<std::string> file_names, int token_count)
 {
 	std::map<std::string, std::vector<std::string>> graph;
 	std::map<std::string, std::vector<std::string>> temp_graph;
@@ -33,7 +33,7 @@ std::map<std::string, std::vector<std::string>> Producer::generate_markov(std::s
 		{
 			parse_file(file, words);
 
-			create_markov_graph(words, temp_graph);
+			create_markov_graph(words, temp_graph, token_count);
 		}
 
 		MarkovBot::Utility::combine_graphs(graph, temp_graph);
@@ -69,24 +69,44 @@ void Producer::parse_file(std::string file_name, std::vector<std::string> &w)
 /*
  * Transforms an array of words into a markov graph.
  */
-void Producer::create_markov_graph(std::vector<std::string> w, std::map<std::string, std::vector<std::string>> &graph)
+void Producer::create_markov_graph(std::vector<std::string> words, std::map<std::string, std::vector<std::string>> &graph, int token_count)
 {
 	std::cout << "Generating markov graph..." << std::endl;
 
-	for(int i = 0; i < w.size(); ++i)
+	std::vector<std::string> w = tokenize_words(words, token_count);
+
+	for(int i = 0; i + 1 < w.size(); ++i)
 	{
 		if(graph.find(w[i]) == graph.end())
 		{
 			graph[w[i]] = std::vector<std::string>();
 		}
-		
-		if(i + 1 != w.size())
-		{
-			graph[w[i]].push_back(w[i + 1]);
-		}
+
+		graph[w[i]].push_back(w[i + 1]);
 	}
 	
 	std::cout << "Markov graph succesfully created." << std::endl;
+}
+
+/*
+ * Combines an array of words into an array of phrases.
+ */
+std::vector<std::string> Producer::tokenize_words(std::vector<std::string> &words, int token_count)
+{
+	std::vector<std::string> tokenized;
+	std::string value;
+	for(int i = 0; i + token_count < words.size(); i = i + token_count)
+	{
+		value.clear();
+		for(int j = 0; j < token_count; j++)
+		{
+			value.append(words[i + j]);
+			value.append(" ");
+		}
+		tokenized.push_back(value);
+	}
+
+	return tokenized;
 }
 
 /*
@@ -113,7 +133,7 @@ void Producer::write_file(std::string output_name, const std::map<std::string, s
 		ofs << std::endl;
 	}
 
-	std::cout << "Finish writing to " << output_name << "." << std::endl;
+	std::cout << "Finished writing to " << output_name << "." << std::endl;
 	ofs.close();
 }
 

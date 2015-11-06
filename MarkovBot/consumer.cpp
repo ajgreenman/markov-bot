@@ -39,7 +39,6 @@ std::string Consumer::generate_text()
 	while(i <= 1000)
 	{
 		ret_val.append(key);
-		ret_val.append(" ");
 		std::map<std::string, std::vector<std::string>>::iterator it = markov_graph.find(key);
 		std::size_t value_length = it->second.size();
 

@@ -9,6 +9,7 @@ using MarkovBot::Producer;
 
 std::vector<std::string> get_input_files();
 std::string get_output_file();
+int get_token_count();
 
 /*
  * Responsible for controlling the interactions between I/O and the producer and consumer classes.
@@ -17,13 +18,14 @@ int main()
 {
 	std::vector<std::string> input_files = get_input_files();
 	std::string output_file = get_output_file();
+	int token_count = get_token_count();
 
 	std::map<std::string, std::vector<std::string>> graph;
 
 	try
 	{
 		Producer p = Producer::Producer();
-		graph = p.generate_markov(output_file, input_files);
+		graph = p.generate_markov(output_file, input_files, token_count);
 		Consumer c = Consumer::Consumer(graph);
 		std::cout << c.generate_text() << std::endl;
 	}
@@ -78,4 +80,21 @@ std::string get_output_file()
 	std::cin >> file;
 
 	return file;
+}
+
+/*
+ * Gets the amount of tokens to use per phrase.
+ */
+int get_token_count()
+{
+	int tokens;
+	std::cout << "Enter the amount of tokens per phrase: " << std::endl;
+	std::cin >> tokens;
+
+	if(std::cin.fail())
+	{
+		tokens = 1;
+	}
+
+	return tokens;
 }
