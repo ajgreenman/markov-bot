@@ -10,6 +10,7 @@ using MarkovBot::Producer;
 std::vector<std::string> get_input_files();
 std::string get_output_file();
 int get_int(std::string);
+void write_output_to_file(std::string output, std::string output_name);
 
 /*
  * Responsible for controlling the interactions between I/O and the producer and consumer classes.
@@ -27,9 +28,31 @@ int main()
 		Producer p = Producer::Producer();
 		graph = p.generate_markov(output_file, input_files, token_count);
 		Consumer c = Consumer::Consumer(graph);
+		int phrases, count;
+		std::string output, answer;
+		bool more = true;
+		while(more)
+		{
+			phrases = get_int("Enter the amount of phrases per output: ");
+			count = get_int("Enter the amount of outputs: ");
+			output = c.generate_text(phrases, count);
 
-		std::cout << c.generate_text(get_int("Enter the amount of phrases per output: "),
-									 get_int("Enter the amount of outputs: ")) << std::endl;
+			std::cout << "Write output to a file? (y/n)" << std::endl;
+			std::cin >> answer;
+			if(answer == "y")
+			{
+				std::cout << "Enter output file name: " << std::endl;
+				std::cin >> answer;
+				write_output_to_file(output, answer);
+			}
+
+			std::cout << "Produce more output? (y/n)" << std::endl;
+			std::cin >> answer;
+			if(answer != "y")
+			{
+				more = false;
+			}
+		}
 	}
 	catch (std::exception &e)
 	{
@@ -99,4 +122,21 @@ int get_int(std::string prompt)
 	}
 
 	return value;
+}
+
+void write_output_to_file(std::string output, std::string output_name)
+{
+	std::ofstream ofs(output_name);
+
+	if(!ofs.is_open())
+	{
+		throw std::exception("Unable to write file.");
+	}
+
+	std::cout << "Writing output to " << output_name << "..." << std::endl;
+
+	ofs << output;
+
+	std::cout << "Finished writing to " << output_name << "." << std::endl;
+	ofs.close();
 }
