@@ -15,7 +15,7 @@ namespace MarkovBot
 		Consumer(std::map<std::string, std::vector<std::string>> graph);
 		~Consumer();
 		void swap(std::map<std::string, std::vector<std::string>> graph);
-		std::string generate_text();
+		std::string generate_text(int phrases, int count);
 	private:
 		std::map<std::string, std::vector<std::string>> markov_graph;
 		std::string find_starting_place();

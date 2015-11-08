@@ -24,7 +24,7 @@ void Consumer::swap(std::map<std::string, std::vector<std::string>> graph)
 /*
  * Generates pseudo-text from a markov graph.
  */
-std::string Consumer::generate_text()
+std::string Consumer::generate_text(int phrases, int count)
 {
 	if(markov_graph.begin() == markov_graph.end())
 	{
@@ -32,20 +32,22 @@ std::string Consumer::generate_text()
 	}
 
 	srand(time(NULL));
-	std::string ret_val;
-	std::string key = find_starting_place();
+	std::string ret_val, key;
 
-	int i = 0;
-	while(i <= 1000)
+	for(int i = 0; i < count; ++i)
 	{
-		ret_val.append(key);
-		std::map<std::string, std::vector<std::string>>::iterator it = markov_graph.find(key);
-		std::size_t value_length = it->second.size();
+		key = find_starting_place();
+		for(int j = 0; j < phrases; ++j)
+		{
+			ret_val.append(key);
+			std::map<std::string, std::vector<std::string>>::iterator it = markov_graph.find(key);
+			std::size_t value_length = it->second.size();
 
-		int value_index = rand() % value_length;
-		key = it->second[value_index];
+			int value_index = rand() % value_length;
+			key = it->second[value_index];
+		}
 
-		i++;
+		ret_val.append("\n\n");
 	}
 
 	return ret_val;
