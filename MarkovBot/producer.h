@@ -2,9 +2,11 @@
 #define __MARKOVBOT_PRODUCER_H
 
 #include "Utility.h"
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <regex>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -25,6 +27,7 @@ namespace MarkovBot
 		std::string get_output_name(std::string output_name);
 		void parse_file(std::string file_name, std::vector<std::string> &w);
 		void create_markov_graph(std::vector<std::string> w, std::map<std::string, std::vector<std::string>> &graph, int token_count);
+		void to_lower(std::vector<std::string> &words);
 		std::vector<std::string> tokenize_words(std::vector<std::string> &words, int token_count);
 		void write_file(std::string output_name, const std::map<std::string, std::vector<std::string> > &graph);
 	};

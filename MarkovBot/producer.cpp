@@ -33,6 +33,8 @@ std::map<std::string, std::vector<std::string>> Producer::generate_markov(std::s
 		{
 			parse_file(file, words);
 
+			to_lower(words);
+
 			create_markov_graph(words, temp_graph, token_count);
 		}
 
@@ -75,17 +77,31 @@ void Producer::create_markov_graph(std::vector<std::string> words, std::map<std:
 
 	std::vector<std::string> w = tokenize_words(words, token_count);
 
-	for(int i = 0; i + 1 < w.size(); ++i)
+	for(int i = 0; i + token_count < w.size(); ++i)
 	{
 		if(graph.find(w[i]) == graph.end())
 		{
 			graph[w[i]] = std::vector<std::string>();
 		}
 
-		graph[w[i]].push_back(w[i + 1]);
+		graph[w[i]].push_back(w[i + token_count]);
 	}
 	
 	std::cout << "Markov graph succesfully created." << std::endl;
+}
+
+/*
+ * Transforms an array of words into the same array, but with all characters lowercase.
+ */
+void Producer::to_lower(std::vector<std::string> &words)
+{
+	for(int i = 0; i < words.size(); ++i)
+	{
+		for(int j = 0; j < words[i].size(); ++j)
+		{
+			std::transform(words[i].begin(), words[i].end(), words[i].begin(), ::tolower);
+		}
+	}
 }
 
 /*
@@ -95,7 +111,7 @@ std::vector<std::string> Producer::tokenize_words(std::vector<std::string> &word
 {
 	std::vector<std::string> tokenized;
 	std::string value;
-	for(int i = 0; i + token_count < words.size(); i = i + token_count)
+	for(int i = 0; i + token_count < words.size(); i++)
 	{
 		value.clear();
 		for(int j = 0; j < token_count; j++)
