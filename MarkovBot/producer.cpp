@@ -35,6 +35,8 @@ std::map<std::string, std::vector<std::string>> Producer::generate_markov(std::s
 
 			to_lower(words);
 
+			remove_unwanted_characters(words);
+
 			create_markov_graph(words, temp_graph, token_count);
 		}
 
@@ -164,4 +166,25 @@ std::string Producer::get_output_name(std::string output_name)
 	ret_val.append(".markov");
 
 	return ret_val;
+}
+
+/*
+ * Removes unwanted characters from a string that might hurt the markov graph generation.
+ */
+void Producer::remove_unwanted_characters(std::vector<std::string> &words)
+{
+	std::vector<char> unwanted_characters;
+	unwanted_characters.push_back('<');
+	unwanted_characters.push_back('>');
+	unwanted_characters.push_back('|');
+	unwanted_characters.push_back('~');
+	unwanted_characters.push_back('`');
+
+	for(auto &word : words)
+	{
+		for(auto &character : unwanted_characters)
+		{
+			word.erase(std::remove(word.begin(), word.end(), character), word.end());
+		}
+	}
 }

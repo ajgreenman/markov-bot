@@ -30,6 +30,7 @@ namespace MarkovBot
 		void to_lower(std::vector<std::string> &words);
 		std::vector<std::string> tokenize_words(std::vector<std::string> &words, int token_count);
 		void write_file(std::string output_name, const std::map<std::string, std::vector<std::string> > &graph);
+		void remove_unwanted_characters(std::vector<std::string> &words);
 	};
 }
 
