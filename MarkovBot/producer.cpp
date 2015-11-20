@@ -31,19 +31,17 @@ std::map<std::string, std::vector<std::string>> Producer::generate_markov(std::s
 		} 
 		else
 		{
-			parse_file(file, words);
+			parse_file(file);
 
-			to_lower(words);
+			transform_text();
 
-			remove_unwanted_characters(words);
-
-			create_markov_graph(words, temp_graph, token_count);
+			create_markov_graph(temp_graph, token_count);
 		}
 
 		MarkovBot::Utility::combine_graphs(graph, temp_graph);
 	}
 
-	write_file(get_output_name(output_name), graph);
+	Utility::write_markov_file(Utility::get_output_name(output_name), graph);
 
 	return graph;
 }
@@ -51,7 +49,7 @@ std::map<std::string, std::vector<std::string>> Producer::generate_markov(std::s
 /*
  * Parses the input file into an array of individual words.
  */
-void Producer::parse_file(std::string file_name, std::vector<std::string> &w)
+void Producer::parse_file(std::string file_name)
 {
 	std::ifstream ifs;
 	ifs.open(file_name);
@@ -65,19 +63,21 @@ void Producer::parse_file(std::string file_name, std::vector<std::string> &w)
 	// Read entire contents of the file into a single string.
 	std::string content((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
 
-	w = MarkovBot::Utility::split_string_to_vector(content);
+	words = MarkovBot::Utility::split_string_to_vector(content);
 
 	std::cout << "Successfully read " << file_name << "." << std::endl;
 }
 
+#pragma region Generate Markov Graph
+
 /*
  * Transforms an array of words into a markov graph.
  */
-void Producer::create_markov_graph(std::vector<std::string> words, std::map<std::string, std::vector<std::string>> &graph, int token_count)
+void Producer::create_markov_graph(std::map<std::string, std::vector<std::string>> &graph, int token_count)
 {
 	std::cout << "Generating markov graph..." << std::endl;
 
-	std::vector<std::string> w = tokenize_words(words, token_count);
+	std::vector<std::string> w = tokenize_words(token_count);
 
 	for(int i = 0; i + token_count < w.size(); ++i)
 	{
@@ -93,23 +93,9 @@ void Producer::create_markov_graph(std::vector<std::string> words, std::map<std:
 }
 
 /*
- * Transforms an array of words into the same array, but with all characters lowercase.
- */
-void Producer::to_lower(std::vector<std::string> &words)
-{
-	for(int i = 0; i < words.size(); ++i)
-	{
-		for(int j = 0; j < words[i].size(); ++j)
-		{
-			std::transform(words[i].begin(), words[i].end(), words[i].begin(), ::tolower);
-		}
-	}
-}
-
-/*
  * Combines an array of words into an array of phrases.
  */
-std::vector<std::string> Producer::tokenize_words(std::vector<std::string> &words, int token_count)
+std::vector<std::string> Producer::tokenize_words(int token_count)
 {
 	std::vector<std::string> tokenized;
 	std::string value;
@@ -126,52 +112,25 @@ std::vector<std::string> Producer::tokenize_words(std::vector<std::string> &word
 
 	return tokenized;
 }
+#pragma endregion
+
+#pragma region Transform Text
 
 /*
- * Writes a markov graph to a file.
+ * Contains the methods that help modify the text in a way that allows better text generation.
  */
-void Producer::write_file(std::string output_name, const std::map<std::string, std::vector<std::string> > &graph)
+void Producer::transform_text()
 {
-	std::ofstream ofs(output_name);
+	std::cout << "Transforming text for better generation..." << std::endl;
 
-	if(!ofs.is_open())
-	{
-		throw std::exception("Unable to write file.");
-	}
-
-	std::cout << "Writing final markov graph to " << output_name << "..." << std::endl;
-
-	for(auto &words : graph)
-	{
-		ofs << words.first << "|";
-		for(auto &word : words.second)
-		{
-			ofs << word << " ";
-		}
-		ofs << std::endl;
-	}
-
-	std::cout << "Finished writing to " << output_name << "." << std::endl;
-	ofs.close();
-}
-
-/*
- * Strips out file extensions and appends the markov file extension.
- */ 
-std::string Producer::get_output_name(std::string output_name)
-{
-	std::size_t pos = output_name.find(".");
-
-	std::string ret_val = output_name.substr(0, pos);
-	ret_val.append(".markov");
-
-	return ret_val;
+	remove_unwanted_characters();
+	to_lower();
 }
 
 /*
  * Removes unwanted characters from a string that might hurt the markov graph generation.
  */
-void Producer::remove_unwanted_characters(std::vector<std::string> &words)
+void Producer::remove_unwanted_characters()
 {
 	std::vector<char> unwanted_characters;
 	unwanted_characters.push_back('<');
@@ -188,3 +147,19 @@ void Producer::remove_unwanted_characters(std::vector<std::string> &words)
 		}
 	}
 }
+
+/*
+ * Transforms an array of words into the same array, but with all characters lowercase.
+ */
+void Producer::to_lower()
+{
+	for(int i = 0; i < words.size(); ++i)
+	{
+		for(int j = 0; j < words[i].size(); ++j)
+		{
+			std::transform(words[i].begin(), words[i].end(), words[i].begin(), ::tolower);
+		}
+	}
+}
+
+#pragma endregion

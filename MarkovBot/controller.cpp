@@ -9,7 +9,9 @@ using MarkovBot::Producer;
 
 std::vector<std::string> get_input_files();
 std::string get_output_file();
+
 int get_int(std::string);
+
 void write_output_to_file(std::string output, std::string output_name);
 
 /*

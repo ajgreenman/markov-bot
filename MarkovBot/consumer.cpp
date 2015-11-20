@@ -7,12 +7,6 @@ Consumer::Consumer(std::map<std::string, std::vector<std::string>> graph)
 	swap(graph);
 }
 
-
-Consumer::~Consumer()
-{
-
-}
-
 /*
  * Swaps in a new markov graph, replacing the old one.
  */
@@ -34,6 +28,8 @@ std::string Consumer::generate_text(int phrases, int count)
 	srand(time(NULL));
 	std::string ret_val, key;
 
+	std::cout << "Generating text..." << std::endl;
+
 	for(int i = 0; i < count; ++i)
 	{
 		key = find_starting_place();
@@ -49,6 +45,8 @@ std::string Consumer::generate_text(int phrases, int count)
 
 		ret_val.append("\n\n");
 	}
+
+	std::cout << "Generation completed." << std::endl;
 
 	return ret_val;
 }

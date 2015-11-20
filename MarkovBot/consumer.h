@@ -13,7 +13,6 @@ namespace MarkovBot
 	{
 	public:
 		Consumer(std::map<std::string, std::vector<std::string>> graph);
-		~Consumer();
 		void swap(std::map<std::string, std::vector<std::string>> graph);
 		std::string generate_text(int phrases, int count);
 	private:

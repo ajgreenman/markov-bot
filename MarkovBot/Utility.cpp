@@ -41,6 +41,34 @@ void Utility::parse_markov_file(std::string markov_file, std::map<std::string, s
 }
 
 /*
+ * Writes a markov graph to a file.
+ */
+void Utility::write_markov_file(std::string output_name, const std::map<std::string, std::vector<std::string> > &graph)
+{
+	std::ofstream ofs(output_name);
+
+	if(!ofs.is_open())
+	{
+		throw std::exception("Unable to write file.");
+	}
+
+	std::cout << "Writing final markov graph to " << output_name << "..." << std::endl;
+
+	for(auto &words : graph)
+	{
+		ofs << words.first << "|";
+		for(auto &word : words.second)
+		{
+			ofs << word << " ";
+		}
+		ofs << std::endl;
+	}
+
+	std::cout << "Finished writing to " << output_name << "." << std::endl;
+	ofs.close();
+}
+
+/*
  * Combines two markov graphs into one.
  */
 void Utility::combine_graphs(std::map<std::string, std::vector<std::string>> &a,
@@ -112,4 +140,17 @@ bool Utility::is_markov(std::string file_name)
 	std::string file_extension = file_name.substr(pos);
 
 	return file_extension == ".markov";
+}
+
+/*
+ * Strips out file extensions and appends the markov file extension.
+ */ 
+std::string Utility::get_output_name(std::string output_name)
+{
+	std::size_t pos = output_name.find(".");
+
+	std::string ret_val = output_name.substr(0, pos);
+	ret_val.append(".markov");
+
+	return ret_val;
 }
