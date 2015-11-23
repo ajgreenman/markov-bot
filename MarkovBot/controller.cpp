@@ -10,6 +10,8 @@
 #define KEY_Y 121
 #define KEY_N 110
 
+#define OUTPUT_PARAMETERS 500
+
 using MarkovBot::Consumer;
 using MarkovBot::Producer;
 
@@ -123,13 +125,34 @@ int version_two()
 	}
 
 	int token_count, passes = get_int("Enter the number of generations: ");
+
+	std::string output, answer;
+	std::vector<std::string> w;
 	
 	for(int i = 0; i < passes; ++i)
 	{
 		token_count = get_int("Enter the amount of tokens per phrase: ");
 		graph = p.generate_markov_graph(output_file, words, token_count, graph);
 		c.swap(graph);
+		output = c.generate_text(OUTPUT_PARAMETERS, OUTPUT_PARAMETERS);
+		w = MarkovBot::Utility::split_string_to_vector(output);
+		words.insert(words.begin(), w.begin(), w.end());
 	}
+
+	std::cout << "All generations completed. Starting final run-through..." << std::endl;
+	token_count = get_int("Enter the amount of tokens per phrase: ");
+	graph = p.generate_markov_graph(output_file, words, token_count, graph);
+	c.swap(graph);
+
+	MarkovBot::Utility::write_markov_file(MarkovBot::Utility::get_output_name(output_file), graph);
+
+	int phrases, count;
+	phrases = get_int("Enter the amount of phrases per output: ");
+	count = get_int("Enter the amount of outputs: ");
+	output = c.generate_text(phrases, count);
+	std::cout << "Enter output file name: " << std::endl;
+	std::cin >> answer;
+	write_output_to_file(output, answer);
 
 	return 0;
 }
