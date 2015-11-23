@@ -41,14 +41,15 @@ std::string Consumer::generate_text(int phrases, int count) const
 	for(int i = 0; i < count; ++i)
 	{
 		key = find_starting_place();
+		ret_val.append(key);
 		for(int j = 0; j < phrases; ++j)
 		{
-			ret_val.append(key);
 			markov::const_iterator it = markov_graph.find(key);
 			std::size_t value_length = it->second.size();
 
 			int value_index = rand() % value_length;
-			key = it->second[value_index];
+			ret_val.append(it->second[value_index] + " ");
+			key = find_new_key(key, it->second[value_index]);
 		}
 
 		ret_val.append("\n\n");
@@ -73,5 +74,18 @@ std::string Consumer::find_starting_place() const
 		it++;
 	}
 
-	return it->first;
+	std::string ret_val = it->first;
+
+	return ret_val;
+}
+
+/*
+ * 
+ */
+std::string Consumer::find_new_key(std::string current_key, std::string new_word) const
+{
+	std::string ret_val = current_key.substr(current_key.find_first_of(' ') + 1);
+	ret_val.append(new_word + " ");
+
+	return ret_val;
 }

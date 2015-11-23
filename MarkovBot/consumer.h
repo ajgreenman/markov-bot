@@ -19,6 +19,7 @@ namespace MarkovBot
 	private:
 		markov markov_graph;
 		std::string find_starting_place() const;
+		std::string find_new_key(std::string current_key, std::string new_word) const;
 	};
 }
 

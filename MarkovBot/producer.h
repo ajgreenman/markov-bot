@@ -3,7 +3,9 @@
 
 #include "Utility.h"
 #include <algorithm>
+#include <cctype>
 #include <fstream>
+#include <functional>
 #include <iostream>
 #include <map>
 #include <regex>
@@ -31,11 +33,13 @@ namespace MarkovBot
 		void parse_file_version1(std::string file_name);
 
 		void create_markov_graph(markov &graph, int token_count);
+		void create_markov_graph_old(markov &graph, int token_count);
 		std::vector<std::string> tokenize_words(int token_count);
 
 		void transform_text();
 		void remove_unwanted_characters();
 		void to_lower();
+		std::string rtrim(std::string &s);
 	};
 }
 

@@ -22,8 +22,6 @@ markov Producer::generate_markov_graph(std::vector<std::string> w, int token_cou
 
 	words = w;
 
-	transform_text();
-
 	create_markov_graph(graph, token_count);
 
 	MarkovBot::Utility::combine_graphs(graph, temp_graph);
@@ -94,7 +92,7 @@ std::vector<std::string> Producer::parse_file(std::string file_name) const
 #pragma region Generate Markov Graph
 
 /*
- * Transforms an array of words into a markov graph.
+ * New generation method.
  */
 void Producer::create_markov_graph(markov &graph, int token_count)
 {
@@ -109,10 +107,32 @@ void Producer::create_markov_graph(markov &graph, int token_count)
 			graph[w[i]] = std::vector<std::string>();
 		}
 
+		graph[w[i]].push_back(words[i + token_count]);
+	}
+
+	std::cout << "New markov graph succesfully created." << std::endl;
+}
+
+/*
+ * Transforms an array of words into a markov graph.
+ */
+void Producer::create_markov_graph_old(markov &graph, int token_count)
+{
+	std::cout << "Generating markov graph (old)..." << std::endl;
+
+	std::vector<std::string> w = tokenize_words(token_count);
+
+	for(int i = 0; i + token_count < w.size(); ++i)
+	{
+		if(graph.find(w[i]) == graph.end())
+		{
+			graph[w[i]] = std::vector<std::string>();
+		}
+
 		graph[w[i]].push_back(w[i + token_count]);
 	}
 	
-	std::cout << "Markov graph succesfully created." << std::endl;
+	std::cout << "Markov graph successfully created." << std::endl;
 }
 
 /*
@@ -130,6 +150,7 @@ std::vector<std::string> Producer::tokenize_words(int token_count)
 			value.append(words[i + j]);
 			value.append(" ");
 		}
+
 		tokenized.push_back(value);
 	}
 
@@ -141,6 +162,7 @@ std::vector<std::string> Producer::tokenize_words(int token_count)
 
 /*
  * Contains the methods that help modify the text in a way that allows better text generation.
+ * Note: These methods significantly slow down the program.
  */
 void Producer::transform_text()
 {
@@ -178,7 +200,7 @@ void Producer::to_lower()
 {
 	for(int i = 0; i < words.size(); ++i)
 	{
-		for(int j = 0; j < words[i].size(); ++j)
+		for(auto &c : words[i])
 		{
 			std::transform(words[i].begin(), words[i].end(), words[i].begin(), ::tolower);
 		}
