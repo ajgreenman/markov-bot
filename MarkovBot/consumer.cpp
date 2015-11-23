@@ -2,7 +2,7 @@
 
 using MarkovBot::Consumer;
 
-Consumer::Consumer(std::map<std::string, std::vector<std::string>> graph)
+Consumer::Consumer(markov graph)
 {
 	swap(graph);
 }
@@ -10,7 +10,7 @@ Consumer::Consumer(std::map<std::string, std::vector<std::string>> graph)
 /*
  * Swaps in a new markov graph, replacing the old one.
  */
-void Consumer::swap(std::map<std::string, std::vector<std::string>> graph)
+void Consumer::swap(markov graph)
 {
 	markov_graph = graph;
 }
@@ -36,7 +36,7 @@ std::string Consumer::generate_text(int phrases, int count)
 		for(int j = 0; j < phrases; ++j)
 		{
 			ret_val.append(key);
-			std::map<std::string, std::vector<std::string>>::iterator it = markov_graph.find(key);
+			markov::iterator it = markov_graph.find(key);
 			std::size_t value_length = it->second.size();
 
 			int value_index = rand() % value_length;
@@ -59,7 +59,7 @@ std::string Consumer::find_starting_place()
 	std::size_t graph_sz = markov_graph.size();
 	int start = rand() % graph_sz;
 
-	std::map<std::string, std::vector<std::string>>::iterator it = markov_graph.begin();
+	markov::iterator it = markov_graph.begin();
 	for(int i = 0; i < start; i++)
 	{
 		it++;

@@ -22,13 +22,15 @@ namespace MarkovBot
 		Producer();
 		~Producer();
 
-		std::map<std::string, std::vector<std::string>> generate_markov(std::string output_name, std::vector<std::string> file_names, int token_count);
+		markov generate_markov_graph(std::string output_name, std::vector<std::string> w, int token_count, markov graph);
+		markov generate_markov(std::string output_name, std::vector<std::string> file_names, int token_count);
+		std::vector<std::string> parse_file(std::string file_name) const;
 	private:
 		std::vector<std::string> words;
 
-		void parse_file(std::string file_name);
+		void parse_file_version1(std::string file_name);
 
-		void create_markov_graph(std::map<std::string, std::vector<std::string>> &graph, int token_count);
+		void create_markov_graph(markov &graph, int token_count);
 		std::vector<std::string> tokenize_words(int token_count);
 
 		void transform_text();

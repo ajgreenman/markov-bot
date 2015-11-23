@@ -5,7 +5,7 @@ using MarkovBot::Utility;
 /*
  * Parses a .markov file into a markov graph.
  */
-void Utility::parse_markov_file(std::string markov_file, std::map<std::string, std::vector<std::string>> &graph)
+void Utility::parse_markov_file(std::string markov_file, markov &graph)
 {
 	if(!is_markov(markov_file))
 	{
@@ -71,8 +71,8 @@ void Utility::write_markov_file(std::string output_name, const std::map<std::str
 /*
  * Combines two markov graphs into one.
  */
-void Utility::combine_graphs(std::map<std::string, std::vector<std::string>> &a,
-					   const std::map<std::string, std::vector<std::string>> &b)
+void Utility::combine_graphs(markov &a,
+					   const markov &b)
 {
 	std::string key;
 	std::vector<std::string> value;
@@ -96,7 +96,7 @@ void Utility::combine_graphs(std::map<std::string, std::vector<std::string>> &a,
 /*
  * Prints a markov graph for debugging purposes.
  */
- void Utility::print_graph(std::map<std::string, std::vector<std::string>> graph)
+ void Utility::print_graph(markov graph)
 {
 	std::cout << "Printing markov graph..." << std::endl;
 

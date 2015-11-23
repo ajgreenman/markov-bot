@@ -1,12 +1,23 @@
 #include <algorithm>
+#include <conio.h>
 #include <string>
 #include <vector>
 #include "producer.h"
 #include "consumer.h"
 
+#define KEY_ONE 49
+#define KEY_Q 113
+#define KEY_Y 121
+#define KEY_N 110
+
 using MarkovBot::Consumer;
 using MarkovBot::Producer;
 
+int version_one();
+int version_two();
+
+std::string get_file();
+std::vector<std::string> get_input(const Producer &p);
 std::vector<std::string> get_input_files();
 std::string get_output_file();
 
@@ -19,11 +30,37 @@ void write_output_to_file(std::string output, std::string output_name);
  */
 int main()
 {
+	std::cout << "Welcome to my Markov Generator." << std::endl << "Press (1) to do version 1.0 of the Bot, or anything else to do version 2.0." << std::endl;
+	int input = _getch();
+	//std::cout << input;
+
+	if(input == KEY_ONE)
+	{
+		if(version_one() != 0)
+		{
+			return 1;
+		}
+	}
+	else
+	{
+		if(version_two() != 0)
+		{
+			return 1;
+		}
+	}
+
+	std::cout << std::endl << "Done!" << std::endl;
+
+	return 0;
+}
+
+int version_one()
+{
 	std::vector<std::string> input_files = get_input_files();
 	std::string output_file = get_output_file();
 	int token_count = get_int("Enter the amount of tokens per phrase: ");
 
-	std::map<std::string, std::vector<std::string>> graph;
+	markov graph;
 
 	try
 	{
@@ -62,9 +99,115 @@ int main()
 		return 1;
 	}
 
-	std::cout << "Done!" << std::endl;
+	return 0;
+}
+
+int version_two()
+{
+	std::cout << std::endl << "Welcome to Version 2.0 of my Markov Generator. Press (q) at any time to quit." << std::endl;
+	
+	markov graph;
+	Producer p = Producer::Producer();
+	Consumer c = Consumer::Consumer(graph);
+
+	std::vector<std::string> words = get_input(p);
+	if(words.empty())
+	{
+		return 0;
+	}
+
+	std::string output_file = get_output_file();
+	if(output_file == "q")
+	{
+		return 0;
+	}
+
+	int token_count, passes = get_int("Enter the number of generations: ");
+	
+	for(int i = 0; i < passes; ++i)
+	{
+		token_count = get_int("Enter the amount of tokens per phrase: ");
+		graph = p.generate_markov_graph(output_file, words, token_count, graph);
+		c.swap(graph);
+	}
 
 	return 0;
+}
+
+std::vector<std::string> get_input(const Producer &p)
+{
+	bool done_parsing, no_more_files = false;
+	
+	std::string file;
+	std::vector<std::string> w, ret;
+
+	do
+	{
+		file = get_file();
+		if(file == "q")
+		{
+			ret.clear();
+			return ret;
+		}
+
+		done_parsing = false;
+		do
+		{
+			try
+			{
+				w = p.parse_file(file);
+				done_parsing = true;
+			}
+			catch (std::exception &e)
+			{
+				std::cout << e.what() << std::endl;
+
+				std::cout << "Try again? (y/n)" << std::endl;
+				int input = tolower(_getch());
+				switch(input)
+				{
+				case KEY_Q:
+					ret.clear();
+					return ret;
+				case KEY_Y:
+					file = get_file();
+					break;
+				case KEY_N:
+				default:
+					done_parsing = true;
+				}
+			}
+
+		} while(!done_parsing);
+		
+		ret.insert(ret.end(), w.begin(), w.end());
+
+		std::cout << "Add more files? (y/n)" << std::endl;
+		int input = tolower(_getch());
+		switch(input)
+		{
+		case KEY_Q:
+			ret.clear();
+			return ret;
+		case KEY_Y:
+			break;
+		case KEY_N:
+		default:
+			no_more_files = true;
+		}
+
+	} while(!no_more_files);
+
+	return ret;
+}
+
+std::string get_file()
+{
+	std::cout << "Enter a file to parse: " << std::endl;
+	std::string file;
+	std::cin >> file;
+
+	return file;
 }
 
 /*

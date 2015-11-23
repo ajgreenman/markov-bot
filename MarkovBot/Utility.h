@@ -9,6 +9,8 @@
 #include <string>
 #include <vector>
 
+typedef std::map<std::string, std::vector<std::string>> markov;
+
 namespace MarkovBot
 {
 	/*
@@ -17,12 +19,12 @@ namespace MarkovBot
 	class Utility
 	{
 	public:
-		static void parse_markov_file(std::string markov_file, std::map<std::string, std::vector<std::string>> &graph);
+		static void parse_markov_file(std::string markov_file, markov &graph);
 		static void write_markov_file(std::string output_name, const std::map<std::string, std::vector<std::string> > &graph);
 
-		static void combine_graphs(std::map<std::string, std::vector<std::string>> &a,
-								   const std::map<std::string, std::vector<std::string>> &b);
-		static void print_graph(std::map<std::string, std::vector<std::string>> graph);
+		static void combine_graphs(markov &a,
+								   const markov &b);
+		static void print_graph(markov graph);
 
 		static std::vector<std::string> Utility::split_string_to_vector(std::string s);
 

@@ -14,12 +14,30 @@ Producer::~Producer()
 }
 
 /*
+ * Parses an array of words into a markov graph, writes it to a file, and returns it.
+ */
+markov Producer::generate_markov_graph(std::string output_name, std::vector<std::string> w, int token_count, markov temp_graph)
+{
+	markov graph;
+
+	words = w;
+
+	transform_text();
+
+	create_markov_graph(graph, token_count);
+
+	MarkovBot::Utility::combine_graphs(graph, temp_graph);
+
+	return graph;
+}
+
+/*
  * Parses the input into a markov graph and writes it to a file.
  */
-std::map<std::string, std::vector<std::string>> Producer::generate_markov(std::string output_name, std::vector<std::string> file_names, int token_count)
+markov Producer::generate_markov(std::string output_name, std::vector<std::string> file_names, int token_count)
 {
-	std::map<std::string, std::vector<std::string>> graph;
-	std::map<std::string, std::vector<std::string>> temp_graph;
+	markov graph;
+	markov temp_graph;
 
 	for(auto &file : file_names)
 	{
@@ -31,7 +49,7 @@ std::map<std::string, std::vector<std::string>> Producer::generate_markov(std::s
 		} 
 		else
 		{
-			parse_file(file);
+			words = parse_file(file);
 
 			transform_text();
 
@@ -47,25 +65,30 @@ std::map<std::string, std::vector<std::string>> Producer::generate_markov(std::s
 }
 
 /*
- * Parses the input file into an array of individual words.
+ * Public-facing method to parse a file's contents and return an array of individual words.
+ * The public nature of the method allows the user to try again until success.
  */
-void Producer::parse_file(std::string file_name)
+std::vector<std::string> Producer::parse_file(std::string file_name) const
 {
+	std::vector<std::string> ret;
+
 	std::ifstream ifs;
 	ifs.open(file_name);
 	if(!ifs.good())
 	{
 		throw std::exception("Could not find file.");
 	}
-	
+
 	std::cout << "Reading " << file_name << "..." << std::endl;
 
 	// Read entire contents of the file into a single string.
 	std::string content((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
 
-	words = MarkovBot::Utility::split_string_to_vector(content);
+	ret = MarkovBot::Utility::split_string_to_vector(content);
 
 	std::cout << "Successfully read " << file_name << "." << std::endl;
+
+	return ret;
 }
 
 #pragma region Generate Markov Graph
@@ -73,7 +96,7 @@ void Producer::parse_file(std::string file_name)
 /*
  * Transforms an array of words into a markov graph.
  */
-void Producer::create_markov_graph(std::map<std::string, std::vector<std::string>> &graph, int token_count)
+void Producer::create_markov_graph(markov &graph, int token_count)
 {
 	std::cout << "Generating markov graph..." << std::endl;
 

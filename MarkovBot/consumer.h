@@ -12,11 +12,11 @@ namespace MarkovBot
 	class Consumer
 	{
 	public:
-		Consumer(std::map<std::string, std::vector<std::string>> graph);
-		void swap(std::map<std::string, std::vector<std::string>> graph);
+		Consumer(markov graph);
+		void swap(markov graph);
 		std::string generate_text(int phrases, int count);
 	private:
-		std::map<std::string, std::vector<std::string>> markov_graph;
+		markov markov_graph;
 		std::string find_starting_place();
 	};
 }
