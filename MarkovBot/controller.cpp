@@ -23,6 +23,9 @@ std::vector<std::string> get_input(const Producer &p);
 std::vector<std::string> get_input_files();
 std::string get_output_file();
 
+void generate_markov_graph(Producer &p, Consumer &c,std::vector<std::string> words);
+void generate_markov_text(const Consumer &c);
+
 int get_int(std::string);
 
 void write_output_to_file(std::string output, std::string output_name);
@@ -131,28 +134,18 @@ int version_two()
 	
 	for(int i = 0; i < passes; ++i)
 	{
-		token_count = get_int("Enter the amount of tokens per phrase: ");
-		graph = p.generate_markov_graph(output_file, words, token_count, graph);
-		c.swap(graph);
+		generate_markov_graph(p, c, words);
 		output = c.generate_text(OUTPUT_PARAMETERS, OUTPUT_PARAMETERS);
 		w = MarkovBot::Utility::split_string_to_vector(output);
 		words.insert(words.begin(), w.begin(), w.end());
 	}
 
 	std::cout << "All generations completed. Starting final run-through..." << std::endl;
-	token_count = get_int("Enter the amount of tokens per phrase: ");
-	graph = p.generate_markov_graph(output_file, words, token_count, graph);
-	c.swap(graph);
+	generate_markov_graph(p, c, words);
 
 	MarkovBot::Utility::write_markov_file(MarkovBot::Utility::get_output_name(output_file), graph);
 
-	int phrases, count;
-	phrases = get_int("Enter the amount of phrases per output: ");
-	count = get_int("Enter the amount of outputs: ");
-	output = c.generate_text(phrases, count);
-	std::cout << "Enter output file name: " << std::endl;
-	std::cin >> answer;
-	write_output_to_file(output, answer);
+	generate_markov_text(c);
 
 	return 0;
 }
@@ -292,6 +285,27 @@ int get_int(std::string prompt)
 	}
 
 	return value;
+}
+
+void generate_markov_graph(Producer &p, Consumer &c,std::vector<std::string> words)
+{
+	int token_count = get_int("Enter the amount of tokens per phrase: ");
+	
+	c.swap(p.generate_markov_graph(words, token_count, c.get_graph()));
+}
+
+void generate_markov_text(const Consumer &c)
+{
+	int phrases, count;
+	std::string output, answer;
+
+	phrases = get_int("Enter the amount of phrases per output: ");
+	count = get_int("Enter the amount of outputs: ");
+	output = c.generate_text(phrases, count);
+
+	std::cout << "Enter output file name: " << std::endl;
+	std::cin >> answer;
+	write_output_to_file(output, answer);
 }
 
 void write_output_to_file(std::string output, std::string output_name)

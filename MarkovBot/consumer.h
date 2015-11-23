@@ -13,11 +13,12 @@ namespace MarkovBot
 	{
 	public:
 		Consumer(markov graph);
+		markov get_graph();
 		void swap(markov graph);
-		std::string generate_text(int phrases, int count);
+		std::string generate_text(int phrases, int count) const;
 	private:
 		markov markov_graph;
-		std::string find_starting_place();
+		std::string find_starting_place() const;
 	};
 }
 

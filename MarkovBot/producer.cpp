@@ -16,7 +16,7 @@ Producer::~Producer()
 /*
  * Parses an array of words into a markov graph, writes it to a file, and returns it.
  */
-markov Producer::generate_markov_graph(std::string output_name, std::vector<std::string> w, int token_count, markov temp_graph)
+markov Producer::generate_markov_graph(std::vector<std::string> w, int token_count, markov temp_graph)
 {
 	markov graph;
 
