@@ -9,6 +9,7 @@
 #define KEY_Q 113
 #define KEY_Y 121
 #define KEY_N 110
+#define KEY_M 109
 
 #define OUTPUT_PARAMETERS 500
 
@@ -17,8 +18,10 @@ using MarkovBot::Producer;
 
 int version_one();
 int version_two();
+int generate_off_markov();
+int generate_off_text();
 
-std::string get_file();
+std::string get_file(std::string modifier = "");
 std::vector<std::string> get_input(const Producer &p);
 std::vector<std::string> get_input_files();
 std::string get_output_file();
@@ -110,7 +113,54 @@ int version_one()
 int version_two()
 {
 	std::cout << std::endl << "Welcome to Version 2.0 of my Markov Generator. Press (q) at any time to quit." << std::endl;
-	
+	std::cout << "Press (m) to use a Markov graph, or anything else to upload a text file." << std::endl;
+
+	int input = _getch();
+
+	if(input == KEY_M)
+	{
+		return generate_off_markov();
+	}
+	else
+	{
+		return generate_off_text();
+	}
+}
+
+int generate_off_markov()
+{
+	markov graph;
+	std::string file;
+
+	bool done_parsing = false;
+	while(!done_parsing)
+	{
+		file = get_file("markov ");
+		if(file == "q")
+		{
+			return 0;
+		}
+
+		try
+		{
+			MarkovBot::Utility::parse_markov_file(file, graph);
+			done_parsing = true;
+		}
+		catch (std::exception &e)
+		{
+			std::cout << e.what() << std::endl;
+		}
+	}
+
+	Producer p = Producer::Producer();
+	Consumer c = Consumer::Consumer(graph);
+	generate_markov_text(c);
+
+	return 0;
+}
+
+int generate_off_text()
+{
 	markov graph;
 	Producer p = Producer::Producer();
 	Consumer c = Consumer::Consumer(graph);
@@ -143,11 +193,9 @@ int version_two()
 	std::cout << "All generations completed. Starting final run-through..." << std::endl;
 	generate_markov_graph(p, c, words);
 
-	MarkovBot::Utility::write_markov_file(MarkovBot::Utility::get_output_name(output_file), graph);
+	MarkovBot::Utility::write_markov_file(MarkovBot::Utility::get_output_name(output_file), c.get_graph());
 
 	generate_markov_text(c);
-
-	return 0;
 }
 
 std::vector<std::string> get_input(const Producer &p)
@@ -217,9 +265,9 @@ std::vector<std::string> get_input(const Producer &p)
 	return ret;
 }
 
-std::string get_file()
+std::string get_file(std::string modifier)
 {
-	std::cout << "Enter a file to parse: " << std::endl;
+	std::cout << "Enter a " << modifier << "file to parse: " << std::endl;
 	std::string file;
 	std::cin >> file;
 
