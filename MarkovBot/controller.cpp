@@ -26,7 +26,7 @@ std::vector<std::string> get_input(const Producer &p);
 std::vector<std::string> get_input_files();
 std::string get_output_file();
 
-void generate_markov_graph(Producer &p, Consumer &c,std::vector<std::string> words);
+void generate_markov_graph(Producer &p, Consumer &c,std::vector<std::string> words, int token_count);
 void generate_markov_text(const Consumer &c);
 
 int get_int(std::string);
@@ -177,25 +177,28 @@ int generate_off_text()
 		return 0;
 	}
 
-	int token_count, passes = get_int("Enter the number of generations: ");
+	int passes = get_int("Enter the number of generations: ");
+	int token_count = get_int("Enter the amount of tokens per phrase: ");
 
 	std::string output, answer;
 	std::vector<std::string> w;
-	
 	for(int i = 0; i < passes; ++i)
 	{
-		generate_markov_graph(p, c, words);
+		std::cout << "Starting generation " << i + 1 << "..." << std::endl;
+		generate_markov_graph(p, c, words, token_count);
 		output = c.generate_text(OUTPUT_PARAMETERS, OUTPUT_PARAMETERS);
 		w = MarkovBot::Utility::split_string_to_vector(output);
 		words.insert(words.begin(), w.begin(), w.end());
 	}
 
 	std::cout << "All generations completed. Starting final run-through..." << std::endl;
-	generate_markov_graph(p, c, words);
+	generate_markov_graph(p, c, words, token_count);
 
 	MarkovBot::Utility::write_markov_file(MarkovBot::Utility::get_output_name(output_file), c.get_graph());
 
 	generate_markov_text(c);
+
+	return 0;
 }
 
 std::vector<std::string> get_input(const Producer &p)
@@ -335,10 +338,8 @@ int get_int(std::string prompt)
 	return value;
 }
 
-void generate_markov_graph(Producer &p, Consumer &c,std::vector<std::string> words)
+void generate_markov_graph(Producer &p, Consumer &c,std::vector<std::string> words, int token_count)
 {
-	int token_count = get_int("Enter the amount of tokens per phrase: ");
-	
 	c.swap(p.generate_markov_graph(words, token_count, c.get_graph()));
 }
 
@@ -356,8 +357,13 @@ void generate_markov_text(const Consumer &c)
 	write_output_to_file(output, answer);
 }
 
-void write_output_to_file(std::string output, std::string output_name)
+void write_output_to_file(std::string output, std::string output_file)
 {
+	std::size_t pos = output_file.find(".");
+
+	std::string output_name = output_file.substr(0, pos);
+	output_name.append(".txt");
+
 	std::ofstream ofs(output_name);
 
 	if(!ofs.is_open())
