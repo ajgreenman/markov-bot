@@ -2,31 +2,21 @@
 
 using MarkovBot::Producer;
 
+/*
+ * Constructor.
+ */
 Producer::Producer()
 	: words()
 {
 
 }
 
+/*
+ * Deconstructor.
+ */
 Producer::~Producer()
 {
 
-}
-
-/*
- * Parses an array of words into a markov graph, writes it to a file, and returns it.
- */
-markov Producer::generate_markov_graph(std::vector<std::string> w, int token_count, markov temp_graph)
-{
-	markov graph;
-
-	words = w;
-
-	create_markov_graph(graph, token_count);
-
-	MarkovBot::Utility::combine_graphs(graph, temp_graph);
-
-	return graph;
 }
 
 /*
@@ -63,7 +53,23 @@ markov Producer::generate_markov(std::string output_name, std::vector<std::strin
 }
 
 /*
- * Public-facing method to parse a file's contents and return an array of individual words.
+* Parses a vector of words into a new markov graph, then combines it with a passed in graph and returns it.
+*/
+markov Producer::combine_markov_graphs(std::vector<std::string> w, int token_count, markov temp_graph)
+{
+	markov graph;
+
+	words = w;
+
+	create_markov_graph(graph, token_count);
+
+	MarkovBot::Utility::combine_graphs(graph, temp_graph);
+
+	return graph;
+}
+
+/*
+ * Public-facing method to parse a file's contents and return a vector of individual words.
  * The public nature of the method allows the user to try again until success.
  */
 std::vector<std::string> Producer::parse_file(std::string file_name) const
@@ -89,10 +95,8 @@ std::vector<std::string> Producer::parse_file(std::string file_name) const
 	return ret;
 }
 
-#pragma region Generate Markov Graph
-
 /*
- * New generation method.
+ * Pushes the tokenized vector of words into the markov graph data structure.
  */
 void Producer::create_markov_graph(markov &graph, int token_count)
 {
@@ -110,33 +114,11 @@ void Producer::create_markov_graph(markov &graph, int token_count)
 		graph[w[i]].push_back(words[i + token_count]);
 	}
 
-	std::cout << "New markov graph succesfully created." << std::endl;
+	std::cout << "New markov graph successfully created." << std::endl;
 }
 
 /*
- * Transforms an array of words into a markov graph.
- */
-void Producer::create_markov_graph_old(markov &graph, int token_count)
-{
-	std::cout << "Generating markov graph (old)..." << std::endl;
-
-	std::vector<std::string> w = tokenize_words(token_count);
-
-	for(int i = 0; i + token_count < w.size(); ++i)
-	{
-		if(graph.find(w[i]) == graph.end())
-		{
-			graph[w[i]] = std::vector<std::string>();
-		}
-
-		graph[w[i]].push_back(w[i + token_count]);
-	}
-	
-	std::cout << "Markov graph successfully created." << std::endl;
-}
-
-/*
- * Combines an array of words into an array of phrases.
+ * Combines a vector of words into a vector of phrases.
  */
 std::vector<std::string> Producer::tokenize_words(int token_count)
 {
@@ -156,9 +138,6 @@ std::vector<std::string> Producer::tokenize_words(int token_count)
 
 	return tokenized;
 }
-#pragma endregion
-
-#pragma region Transform Text
 
 /*
  * Contains the methods that help modify the text in a way that allows better text generation.
@@ -194,7 +173,7 @@ void Producer::remove_unwanted_characters()
 }
 
 /*
- * Transforms an array of words into the same array, but with all characters lowercase.
+ * Transforms a vector of words into the same vector, but with all characters lowercase.
  */
 void Producer::to_lower()
 {
@@ -206,5 +185,3 @@ void Producer::to_lower()
 		}
 	}
 }
-
-#pragma endregion
