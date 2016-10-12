@@ -2,9 +2,12 @@
 
 using MarkovBot::Consumer;
 
+/*
+ * Constructor.
+ */
 Consumer::Consumer(markov graph)
 {
-	swap(graph);
+	set_graph(graph);
 }
 
 /*
@@ -16,15 +19,15 @@ markov Consumer::get_graph()
 }
 
 /*
- * Swaps in a new markov graph, replacing the old one.
+ * Sets the graph the Consumer is currently using.
  */
-void Consumer::swap(markov graph)
+void Consumer::set_graph(markov graph)
 {
 	markov_graph = graph;
 }
 
 /*
- * Generates pseudo-text from a markov graph.
+ * Generates pseudo-text by creating markov chains from the markov graph.
  */
 std::string Consumer::generate_text(int phrases, int count) const
 {
@@ -61,7 +64,7 @@ std::string Consumer::generate_text(int phrases, int count) const
 }
 
 /*
- * Finds a random starting point in the markov graph.
+ * Returns a random starting point in the markov graph.
  */
 std::string Consumer::find_starting_place() const
 {
@@ -80,7 +83,7 @@ std::string Consumer::find_starting_place() const
 }
 
 /*
- * 
+ * Finds a new key by removing the first word from the old key and appending the new word to the remainder.
  */
 std::string Consumer::find_new_key(std::string current_key, std::string new_word) const
 {

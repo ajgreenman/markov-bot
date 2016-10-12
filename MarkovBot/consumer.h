@@ -14,7 +14,7 @@ namespace MarkovBot
 	public:
 		Consumer(markov graph);
 		markov get_graph();
-		void swap(markov graph);
+		void set_graph(markov graph);
 		std::string generate_text(int phrases, int count) const;
 	private:
 		markov markov_graph;

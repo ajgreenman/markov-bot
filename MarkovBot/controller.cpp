@@ -369,7 +369,7 @@ int get_int(std::string prompt, int default)
  */
 void combine_markov_graphs(Producer &p, Consumer &c,std::vector<std::string> words, int token_count)
 {
-	c.swap(p.generate_markov_graph(words, token_count, c.get_graph()));
+	c.set_graph(p.generate_markov_graph(words, token_count, c.get_graph()));
 }
 
 /*
