@@ -21,26 +21,25 @@ int version_two();
 int generate_off_markov();
 int generate_off_text();
 
-std::string get_file(std::string modifier = "");
+std::string get_file(std::string type = "");
 std::vector<std::string> get_input(const Producer &p);
 std::vector<std::string> get_input_files();
 std::string get_output_file();
 
-void generate_markov_graph(Producer &p, Consumer &c,std::vector<std::string> words, int token_count);
+void combine_markov_graphs(Producer &p, Consumer &c, std::vector<std::string> words, int token_count);
 void generate_markov_text(const Consumer &c);
 
-int get_int(std::string);
+int get_int(std::string, int default = 1);
 
 void write_output_to_file(std::string output, std::string output_name);
 
 /*
- * Responsible for controlling the interactions between I/O and the producer and consumer classes.
+ * Determines what version of the Bot to run, then runs it. Main entry point of the program.
  */
 int main()
 {
 	std::cout << "Welcome to my Markov Generator." << std::endl << "Press (1) to do version 1.0 of the Bot, or anything else to do version 2.0." << std::endl;
 	int input = _getch();
-	//std::cout << input;
 
 	if(input == KEY_ONE)
 	{
@@ -62,13 +61,17 @@ int main()
 	return 0;
 }
 
+/*
+ * Performs version one of the MarkovBot. This version takes in a list of files, gives them to the Producer to create a markov graph,
+ * and then automatically feeds this graph into the Consumer to generate text.
+ */
 int version_one()
 {
+	markov graph;
 	std::vector<std::string> input_files = get_input_files();
 	std::string output_file = get_output_file();
-	int token_count = get_int("Enter the amount of tokens per phrase: ");
 
-	markov graph;
+	int token_count = get_int("Enter the amount of tokens per phrase: ");
 
 	try
 	{
@@ -77,6 +80,7 @@ int version_one()
 		Consumer c = Consumer::Consumer(graph);
 		int phrases, count;
 		std::string output, answer;
+
 		bool more = true;
 		while(more)
 		{
@@ -110,6 +114,10 @@ int version_one()
 	return 0;
 }
 
+/*
+ * Performs version two of the MarkovBot. This version was designed to add numerous efficiencies to the previous version. These include
+ * the ability to generate text based off of an already-made graph, the ability to use as many files or graphs as you like, 
+ */
 int version_two()
 {
 	std::cout << std::endl << "Welcome to Version 2.0 of my Markov Generator. Press (q) at any time to quit." << std::endl;
@@ -127,13 +135,16 @@ int version_two()
 	}
 }
 
+/*
+ * Creates a markov graph from an existing markov file and feeds this to the Consumer to generate text. The Producer is not required.
+ */
 int generate_off_markov()
 {
 	markov graph;
 	std::string file;
 
 	bool done_parsing = false;
-	while(!done_parsing)
+	while(!done_parsing) // This will loop until a graph is parsed or the user quits. Exceptions will keep it looping.
 	{
 		file = get_file("markov ");
 		if(file == "q")
@@ -152,13 +163,18 @@ int generate_off_markov()
 		}
 	}
 
-	Producer p = Producer::Producer();
 	Consumer c = Consumer::Consumer(graph);
 	generate_markov_text(c);
 
 	return 0;
 }
 
+/*
+ * Generates a new markov graph from a file, and gives it to the Consumer to generate text.
+ * This version two method has an additional feature: You can do multiple "passes" which will
+ * causes the program to generate new markov graphs based on generated text, which results in
+ * more readable text. Entering a high number of passes will bog the system down.
+ */
 int generate_off_text()
 {
 	markov graph;
@@ -185,14 +201,14 @@ int generate_off_text()
 	for(int i = 0; i < passes; ++i)
 	{
 		std::cout << "Starting generation " << i + 1 << "..." << std::endl;
-		generate_markov_graph(p, c, words, token_count);
+		combine_markov_graphs(p, c, words, token_count);
 		output = c.generate_text(OUTPUT_PARAMETERS, OUTPUT_PARAMETERS);
 		w = MarkovBot::Utility::split_string_to_vector(output);
 		words.insert(words.begin(), w.begin(), w.end());
 	}
 
 	std::cout << "All generations completed. Starting final run-through..." << std::endl;
-	generate_markov_graph(p, c, words, token_count);
+	combine_markov_graphs(p, c, words, token_count);
 
 	MarkovBot::Utility::write_markov_file(MarkovBot::Utility::get_output_name(output_file), c.get_graph());
 
@@ -201,9 +217,12 @@ int generate_off_text()
 	return 0;
 }
 
+/*
+ * Asks the user for a file and then parses it into a vector of words. 
+ */
 std::vector<std::string> get_input(const Producer &p)
 {
-	bool done_parsing, no_more_files = false;
+	bool done_parsing = false, no_more_files = false;
 	
 	std::string file;
 	std::vector<std::string> w, ret;
@@ -217,7 +236,6 @@ std::vector<std::string> get_input(const Producer &p)
 			return ret;
 		}
 
-		done_parsing = false;
 		do
 		{
 			try
@@ -238,6 +256,11 @@ std::vector<std::string> get_input(const Producer &p)
 					return ret;
 				case KEY_Y:
 					file = get_file();
+					if (file == "q")
+					{
+						ret.clear();
+						return ret;
+					}
 					break;
 				case KEY_N:
 				default:
@@ -268,9 +291,12 @@ std::vector<std::string> get_input(const Producer &p)
 	return ret;
 }
 
-std::string get_file(std::string modifier)
+/*
+ * Gets a single file of the requested type.
+ */
+std::string get_file(std::string type)
 {
-	std::cout << "Enter a " << modifier << "file to parse: " << std::endl;
+	std::cout << "Enter a " << type << "file to parse: " << std::endl;
 	std::string file;
 	std::cin >> file;
 
@@ -322,9 +348,9 @@ std::string get_output_file()
 }
 
 /*
- * Gets an int value from the user.
+ * Gets an int value from the user. If the user does not provide a valid value, it returns the default value.
  */
-int get_int(std::string prompt)
+int get_int(std::string prompt, int default)
 {
 	int value;
 	std::cout << prompt << std::endl;
@@ -332,17 +358,23 @@ int get_int(std::string prompt)
 
 	if(std::cin.fail())
 	{
-		value = 1;
+		value = default;
 	}
 
 	return value;
 }
 
-void generate_markov_graph(Producer &p, Consumer &c,std::vector<std::string> words, int token_count)
+/*
+ * Combines an existing markov graph with one created from a new vector of words.
+ */
+void combine_markov_graphs(Producer &p, Consumer &c,std::vector<std::string> words, int token_count)
 {
 	c.swap(p.generate_markov_graph(words, token_count, c.get_graph()));
 }
 
+/*
+ * Gets the parameters required for the Consumer to generate text, then generates and writes that text to a file.
+ */
 void generate_markov_text(const Consumer &c)
 {
 	int phrases, count;
@@ -357,13 +389,15 @@ void generate_markov_text(const Consumer &c)
 	write_output_to_file(output, answer);
 }
 
+/*
+ * Writes the output to a text file.
+ */
 void write_output_to_file(std::string output, std::string output_file)
 {
+	// This chunk of code ensures that we write to a .txt file.
 	std::size_t pos = output_file.find(".");
-
 	std::string output_name = output_file.substr(0, pos);
 	output_name.append(".txt");
-
 	std::ofstream ofs(output_name);
 
 	if(!ofs.is_open())

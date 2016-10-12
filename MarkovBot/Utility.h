@@ -4,6 +4,7 @@
 #include <exception>
 #include <fstream>
 #include <iostream>
+#include <iterator>
 #include <map>
 #include <sstream>
 #include <string>
