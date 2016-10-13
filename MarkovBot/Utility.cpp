@@ -3,7 +3,7 @@
 using MarkovBot::Utility;
 
 /*
- * Parses a .markov file into a markov graph.
+ * Parses a markov file into a markov graph.
  */
 void Utility::parse_markov_file(std::string markov_file, markov &graph)
 {
@@ -32,7 +32,6 @@ void Utility::parse_markov_file(std::string markov_file, markov &graph)
 		key = line.substr(0, pos);
 		v = line.substr(pos + 1);
 		value = split_string_to_vector(v);
-
 		
 		graph[key] = value;
 	}
@@ -71,8 +70,7 @@ void Utility::write_markov_file(std::string output_name, const std::map<std::str
 /*
  * Combines two markov graphs into one.
  */
-void Utility::combine_graphs(markov &a,
-					   const markov &b)
+void Utility::combine_graphs(markov &a, const markov &b)
 {
 	std::string key;
 	std::vector<std::string> value;
@@ -114,7 +112,7 @@ void Utility::combine_graphs(markov &a,
 }
  
 /*
- * Splits a string up into words and adds it to a vector.
+ * Splits a string by spaces and puts them into a vector.
  */
 std::vector<std::string> Utility::split_string_to_vector(std::string s)
 {
@@ -137,9 +135,7 @@ bool Utility::is_markov(std::string file_name)
 		return false;
 	}
 
-	std::string file_extension = file_name.substr(pos);
-
-	return file_extension == ".markov";
+	return file_name.substr(pos) == ".markov";
 }
 
 /*
