@@ -31,9 +31,9 @@ markov Producer::generate_markov(std::string output_name, std::vector<std::strin
 	{
 		temp_graph.clear();
 
-		if(MarkovBot::Utility::is_markov(file))
+		if(MarkovBot::MarkovUtility::is_markov(file))
 		{
-			MarkovBot::Utility::parse_markov_file(file, temp_graph);
+			MarkovBot::MarkovUtility::parse_markov_file(file, temp_graph);
 		} 
 		else
 		{
@@ -44,10 +44,10 @@ markov Producer::generate_markov(std::string output_name, std::vector<std::strin
 			create_markov_graph(temp_graph, token_count);
 		}
 
-		MarkovBot::Utility::combine_graphs(graph, temp_graph);
+		MarkovBot::MarkovUtility::combine_graphs(graph, temp_graph);
 	}
 
-	Utility::write_markov_file(Utility::get_output_name(output_name), graph);
+	MarkovUtility::write_markov_file(MarkovUtility::get_output_name(output_name), graph);
 
 	return graph;
 }
@@ -63,7 +63,7 @@ markov Producer::combine_markov_graphs(std::vector<std::string> w, int token_cou
 
 	create_markov_graph(graph, token_count);
 
-	MarkovBot::Utility::combine_graphs(graph, temp_graph);
+	MarkovBot::MarkovUtility::combine_graphs(graph, temp_graph);
 
 	return graph;
 }
@@ -88,7 +88,7 @@ std::vector<std::string> Producer::parse_file(std::string file_name) const
 	// Read entire contents of the file into a single string.
 	std::string content((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
 
-	ret = MarkovBot::Utility::split_string_to_vector(content);
+	ret = MarkovBot::MarkovUtility::split_string_to_vector(content);
 
 	std::cout << "Successfully read " << file_name << "." << std::endl;
 

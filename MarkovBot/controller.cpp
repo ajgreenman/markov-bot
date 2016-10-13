@@ -154,7 +154,7 @@ int generate_off_markov()
 
 		try
 		{
-			MarkovBot::Utility::parse_markov_file(file, graph);
+			MarkovBot::MarkovUtility::parse_markov_file(file, graph);
 			done_parsing = true;
 		}
 		catch (std::exception &e)
@@ -203,14 +203,14 @@ int generate_off_text()
 		std::cout << "Starting generation " << i + 1 << "..." << std::endl;
 		combine_markov_graphs(p, c, words, token_count);
 		output = c.generate_text(OUTPUT_PARAMETERS, OUTPUT_PARAMETERS);
-		w = MarkovBot::Utility::split_string_to_vector(output);
+		w = MarkovBot::MarkovUtility::split_string_to_vector(output);
 		words.insert(words.begin(), w.begin(), w.end());
 	}
 
 	std::cout << "All generations completed. Starting final run-through..." << std::endl;
 	combine_markov_graphs(p, c, words, token_count);
 
-	MarkovBot::Utility::write_markov_file(MarkovBot::Utility::get_output_name(output_file), c.get_graph());
+	MarkovBot::MarkovUtility::write_markov_file(MarkovBot::MarkovUtility::get_output_name(output_file), c.get_graph());
 
 	generate_markov_text(c);
 

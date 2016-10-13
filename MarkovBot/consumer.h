@@ -2,7 +2,7 @@
 #define __MARKOVBOT_CONSUMER_H
 
 #include <time.h>
-#include "Utility.h"
+#include "markov.h"
 
 namespace MarkovBot
 {

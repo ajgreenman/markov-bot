@@ -1,20 +1,20 @@
-#include "Utility.h"
+#include "markov.h"
 
-using MarkovBot::Utility;
+using MarkovBot::MarkovUtility;
 
 /*
- * Parses a markov file into a markov graph.
- */
-void Utility::parse_markov_file(std::string markov_file, markov &graph)
+* Parses a markov file into a markov graph.
+*/
+void MarkovUtility::parse_markov_file(std::string markov_file, markov &graph)
 {
-	if(!is_markov(markov_file))
+	if (!is_markov(markov_file))
 	{
 		throw std::exception("Could not parse file because it was not a .markov file.");
 	}
 
 	std::ifstream ifs;
 	ifs.open(markov_file);
-	if(!ifs.good())
+	if (!ifs.good())
 	{
 		throw std::exception("Could not find file.");
 	}
@@ -26,13 +26,13 @@ void Utility::parse_markov_file(std::string markov_file, markov &graph)
 	std::size_t pos;
 	std::string line, key, v;
 	std::vector<std::string> value;
-	while(std::getline(ifs, line))
+	while (std::getline(ifs, line))
 	{
 		pos = line.find("|");
 		key = line.substr(0, pos);
 		v = line.substr(pos + 1);
 		value = split_string_to_vector(v);
-		
+
 		graph[key] = value;
 	}
 
@@ -40,23 +40,23 @@ void Utility::parse_markov_file(std::string markov_file, markov &graph)
 }
 
 /*
- * Writes a markov graph to a file.
- */
-void Utility::write_markov_file(std::string output_name, const std::map<std::string, std::vector<std::string> > &graph)
+* Writes a markov graph to a file.
+*/
+void MarkovUtility::write_markov_file(std::string output_name, const std::map<std::string, std::vector<std::string> > &graph)
 {
 	std::ofstream ofs(output_name);
 
-	if(!ofs.is_open())
+	if (!ofs.is_open())
 	{
 		throw std::exception("Unable to write file.");
 	}
 
 	std::cout << "Writing final markov graph to " << output_name << "..." << std::endl;
 
-	for(auto &words : graph)
+	for (auto &words : graph)
 	{
 		ofs << words.first << "|";
-		for(auto &word : words.second)
+		for (auto &word : words.second)
 		{
 			ofs << word << " ";
 		}
@@ -68,23 +68,23 @@ void Utility::write_markov_file(std::string output_name, const std::map<std::str
 }
 
 /*
- * Combines two markov graphs into one.
- */
-void Utility::combine_graphs(markov &a, const markov &b)
+* Combines two markov graphs into one.
+*/
+void MarkovUtility::combine_graphs(markov &a, const markov &b)
 {
 	std::string key;
 	std::vector<std::string> value;
 
-	for(auto &key_value : b)
+	for (auto &key_value : b)
 	{
 		key = key_value.first;
 		value = key_value.second;
 
-		if(a.find(key) == a.end())
+		if (a.find(key) == a.end())
 		{
 			a.insert(key_value);
 		}
-		else 
+		else
 		{
 			a[key].insert(a[key].end(), value.begin(), value.end());
 		}
@@ -92,16 +92,16 @@ void Utility::combine_graphs(markov &a, const markov &b)
 }
 
 /*
- * Prints a markov graph for debugging purposes.
- */
- void Utility::print_graph(markov graph)
+* Prints a markov graph for debugging purposes.
+*/
+void MarkovUtility::print_graph(markov graph)
 {
 	std::cout << "Printing markov graph..." << std::endl;
 
-	for(auto &words : graph)
+	for (auto &words : graph)
 	{
 		std::cout << words.first << "|";
-		for(auto &word : words.second)
+		for (auto &word : words.second)
 		{
 			std::cout << word << " ";
 		}
@@ -110,11 +110,11 @@ void Utility::combine_graphs(markov &a, const markov &b)
 
 	std::cout << "Done printing markov graph..." << std::endl;
 }
- 
+
 /*
- * Splits a string by spaces and puts them into a vector.
- */
-std::vector<std::string> Utility::split_string_to_vector(std::string s)
+* Splits a string by spaces and puts them into a vector.
+*/
+std::vector<std::string> MarkovUtility::split_string_to_vector(std::string s)
 {
 	std::vector<std::string> ret_val;
 
@@ -125,12 +125,12 @@ std::vector<std::string> Utility::split_string_to_vector(std::string s)
 }
 
 /*
- * Checks the file extension to see if it's a markov file or not.
- */
-bool Utility::is_markov(std::string file_name)
+* Checks the file extension to see if it's a markov file or not.
+*/
+bool MarkovUtility::is_markov(std::string file_name)
 {
 	std::size_t pos = file_name.find(".");
-	if(pos == std::string::npos)
+	if (pos == std::string::npos)
 	{
 		return false;
 	}
@@ -139,9 +139,9 @@ bool Utility::is_markov(std::string file_name)
 }
 
 /*
- * Strips out file extensions and appends the markov file extension.
- */ 
-std::string Utility::get_output_name(std::string output_name)
+* Strips out file extensions and appends the markov file extension.
+*/
+std::string MarkovUtility::get_output_name(std::string output_name)
 {
 	std::size_t pos = output_name.find(".");
 
