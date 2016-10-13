@@ -162,6 +162,8 @@ void Producer::remove_unwanted_characters()
 	unwanted_characters.push_back('|');
 	unwanted_characters.push_back('~');
 	unwanted_characters.push_back('`');
+	unwanted_characters.push_back('(');
+	unwanted_characters.push_back(')');
 
 	for(auto &word : words)
 	{

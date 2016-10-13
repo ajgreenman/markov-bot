@@ -9,5 +9,3 @@ Then I will receive text that looks like this:
 
 After a while, there was some heavy murmuring, and Ernie went on, "Remember what was inside it? Two entwined serpents were carved, and the hungry look in their blue eyes were wide." 
 Harry could barely hear him over the thuds of more slugs hitting the wet floor of moaning Myrtle's bathroom.
-
-This text doesn't really make sense, but it sounds like J.K. Rowling's writing.

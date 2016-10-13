@@ -6,10 +6,12 @@
 #include "consumer.h"
 
 #define KEY_ONE 49
+#define KEY_TWO 50
+#define KEY_M 109
+#define KEY_N 110
+#define KEY_O 111
 #define KEY_Q 113
 #define KEY_Y 121
-#define KEY_N 110
-#define KEY_M 109
 
 #define OUTPUT_PARAMETERS 500
 
@@ -18,6 +20,9 @@ using MarkovBot::Producer;
 
 int version_one();
 int version_two();
+int version_three();
+
+int generate_quickly();
 int generate_off_markov();
 int generate_off_text();
 
@@ -28,6 +33,7 @@ std::string get_output_file();
 
 void combine_markov_graphs(Producer &p, Consumer &c, std::vector<std::string> words, int token_count);
 void generate_markov_text(const Consumer &c);
+void generate_markov_text_quick(const Consumer &c);
 
 int get_int(std::string, int default = 1);
 
@@ -38,7 +44,7 @@ void write_output_to_file(std::string output, std::string output_name);
  */
 int main()
 {
-	std::cout << "Welcome to my Markov Generator." << std::endl << "Press (1) to do version 1.0 of the Bot, or anything else to do version 2.0." << std::endl;
+	std::cout << "Press (1) for version 1, (2) for version 2, or anything else to do version 3." << std::endl;
 	int input = _getch();
 
 	if(input == KEY_ONE)
@@ -48,9 +54,16 @@ int main()
 			return 1;
 		}
 	}
-	else
+	else if(input == KEY_TWO)
 	{
 		if(version_two() != 0)
+		{
+			return 1;
+		}
+	}
+	else
+	{
+		if (version_three() != 0)
 		{
 			return 1;
 		}
@@ -120,7 +133,7 @@ int version_one()
  */
 int version_two()
 {
-	std::cout << std::endl << "Welcome to Version 2.0 of my Markov Generator. Press (q) at any time to quit." << std::endl;
+	std::cout << std::endl << "Welcome to Version 2. Press (q) at any time to quit." << std::endl;
 	std::cout << "Press (m) to use a Markov graph, or anything else to upload a text file." << std::endl;
 
 	int input = _getch();
@@ -133,6 +146,50 @@ int version_two()
 	{
 		return generate_off_text();
 	}
+}
+
+/*
+ * Performs version three of the MarkovBot. This version adds further enhancements to the previous version, including file weighting, 
+ * pretty text, and an option to perform a quicker option that automatically uses optimal parameters. Version 3 does not include the
+ * option to generate using a Markov graph (which is a version 2 option), because this version is all about being easy for a
+ * non-programmer to use.
+ */
+int version_three()
+{
+	std::cout << std::endl << "Welcome to Version 3. Press (q) at any time to quit." << std::endl;
+	std::cout << "Press (o) to do a quick generation, or anything else to do it the normal way." << std::endl;
+
+	int input = _getch();
+
+	if (input == KEY_O)
+	{
+		return generate_quickly();
+	}
+	else
+	{
+		return generate_off_text();
+	}
+}
+
+/*
+ * Uses default parameters to quickly create output with minimal input from the user.
+ */
+int generate_quickly()
+{
+	markov graph;
+	Producer p = Producer::Producer();
+	Consumer c = Consumer::Consumer(graph);
+
+	std::vector<std::string> words = get_input(p);
+	if (words.empty())
+	{
+		return 0;
+	}
+
+	combine_markov_graphs(p, c, words, 2);
+	generate_markov_text_quick(c);
+
+	return 0;
 }
 
 /*
@@ -387,6 +444,15 @@ void generate_markov_text(const Consumer &c)
 	std::cout << "Enter output file name: " << std::endl;
 	std::cin >> answer;
 	write_output_to_file(output, answer);
+}
+
+/*
+ * Generates and writes text to a file, based on the markov graph. For use in quick run-throughs (version 3).
+ */
+void generate_markov_text_quick(const Consumer &c)
+{
+	std::string output = c.generate_text(50, 20);
+	write_output_to_file(output, "output");
 }
 
 /*
